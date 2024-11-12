@@ -1,0 +1,473 @@
+# Volatility Study of Crypto Market
+
+In this short time, I interest myself with the volatility patterns of the broader cryptocurrency market; with a special focus on 22 live coins. Essentially, I want to answer these questions: How old are the crypto coin projects; what is the volatility behaviour of each coin over time; How volatile are the coins relative to each other; and lastly, which coins are associated with one another. I believe this exploration will unearth the volatility question around the crypto market.
+
+
+
+```{r echo=TRUE}
+
+
+library(fpp3)
+library(tidyverse)
+library(quantmod)
+
+
+
+coin_Aave      = read.csv("Coins/coin_Aave.csv")
+coin_Bitcoin   = read.csv("Coins/coin_Bitcoin.csv")
+coin_Binance   = read.csv("Coins/coin_BinanceCoin.csv")
+coin_Cardano   = read.csv("Coins/coin_Cardano.csv")
+coin_ChainLink = read.csv("coin_ChainLink.csv")
+coin_Cosmos    = read.csv("coin_Cosmos.csv")
+coin_CryptocomCoin = read.csv("coin_CryptocomCoin.csv")
+coin_Dogecoin  = read.csv("Coins/coin_Dogecoin.csv")
+coin_EOS       = read.csv("coin_EOS.csv")
+coin_Ethereum   = read.csv("Coins/coin_Ethereum.csv")
+coin_Iota      = read.csv("coin_Iota.csv")
+coin_Litecoin  = read.csv("coin_Litecoin.csv")
+coin_Monero    = read.csv("coin_Monero.csv")
+coin_NEM       = read.csv("coin_NEM.csv")
+coin_Polkadot = read.csv("Coins/coin_Polkadot.csv")
+coin_Solana   = read.csv("coin_Solana.csv")
+coin_Stellar  = read.csv("coin_Stellar.csv")
+coin_Tether   = read.csv("coin_Tether.csv")
+coin_Tron     = read.csv("coin_Tron.csv")
+coin_USDCoin  = read.csv("coin_USDCoin.csv")
+coin_Uniswap  = read.csv("coin_Uniswap.csv")
+coin_WrappedBitcoin = read.csv("coin_WrappedBitcoin.csv")
+coin_XRP      = read.csv("coin_XRP.csv")
+
+```
+
+```{r include=FALSE}
+# Functions to use 
+
+
+# Compute correlations of each coin towards the crypto market 
+
+corr_coins = function(coin, period, coin.name){
+  
+  
+  coin1 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Aave, period), by = period)[,-1])[1,2]
+  
+  coin2 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Binance, period), by = period)[,-1])[1,2]
+  
+  coin3 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Bitcoin, period), by = period)[,-1])[1,2]
+  
+  coin4 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Cardano, period), by = period)[,-1])[1,2]
+  
+  coin5 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_ChainLink, period), by = period)[,-1])[1,2]
+  
+  coin6 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Cosmos, period), by = period)[,-1])[1,2]
+  
+  coin7 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_CryptocomCoin, period), by = period)[,-1])[1,2]
+  
+  coin8 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Dogecoin, period), by = period)[,-1])[1,2]
+  
+ # coin9 = cor(merge(volatility_index(coin, period),
+                #volatility_index(coin_EOS, period), by = period)[,-1])[1,2]
+  
+  coin10 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Ethereum, period), by = period)[,-1])[1,2]
+  
+  coin11 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Iota, period), by = period)[,-1])[1,2]
+  
+  coin12 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Litecoin, period), by = period)[,-1])[1,2]
+  
+  coin13 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Monero, period), by = period)[,-1])[1,2]
+  
+  coin14 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_NEM, period), by = period)[,-1])[1,2]
+  
+  coin15 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Polkadot, period), by = period)[,-1])[1,2]
+  
+  coin16 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Solana, period), by = period)[,-1])[1,2]
+  
+  coin17 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Stellar, period), by = period)[,-1])[1,2]
+  
+  coin18 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Tether, period), by = period)[,-1])[1,2]
+  
+  coin19 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Tron, period), by = period)[,-1])[1,2]
+  
+  coin20 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_Uniswap, period), by = period)[,-1])[1,2]
+  
+  coin21 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_USDCoin, period), by = period)[,-1])[1,2]
+  
+  coin22 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_WrappedBitcoin, period), by = period)[,-1])[1,2]
+  
+  coin23 = cor(merge(volatility_index(coin, period),
+                volatility_index(coin_XRP, period), by = period)[,-1])[1,2]
+  
+  # stash them in one place 
+  coin001 = c(coin1, coin2, coin3, coin4, coin5, coin6, coin7, coin8, 
+              coin10, coin11, coin12, coin13, coin14, coin15, coin16,
+              coin17, coin18, coin19, coin20, coin21, coin22, coin23)
+  
+  coin002 =  c(
+    'Aave', 'BinanceCoin','Bitcoin', 'Cardano', 'ChainLink', 'Cosmos', 'CryptocomCoin',
+    'Dogecoin',  'Ethereum', 'Iota', 'Litecoin', 'Monero', 'NEM', 'Polkadot',
+    'Solana', 'Stellar', 'Tether', 'Tron', 'USDCoin', 'Uniswap', 'WrappedBitcoin', 'XRP'
+  )
+  
+  
+  coin000 = data.frame(COIN = coin002, coin001 = coin001)
+  colnames(coin000) = c("COIN",coin.name)
+  return(coin000)
+ 
+}
+
+# List of data frames
+
+corr_df = function(period){
+  
+  dfs <- list(corr_coins(coin_Aave, period, "Aave"),
+             corr_coins(coin_Binance, period, "Binance"),
+             corr_coins(coin_Bitcoin, period, "Bitcoin"),
+             corr_coins(coin_Cardano, period, "Cardano"), 
+             corr_coins(coin_ChainLink, period, "ChainLink"), 
+             corr_coins(coin_Cosmos, period,'Cosmos'),
+             corr_coins(coin_CryptocomCoin, period,'CryptocomCoin'),
+             corr_coins(coin_Dogecoin, period,'Dogecoin'),
+             #corr_coins(coin_EOS, period,'EOS'),
+             corr_coins(coin_Ethereum, period,'Ethereum'),
+             corr_coins(coin_Iota, period,'Iota'),
+             corr_coins(coin_Litecoin, period,'Litecoin'),
+             corr_coins(coin_Monero, period,'Monero'),
+             corr_coins(coin_NEM, period,'NEM'),
+             corr_coins(coin_Polkadot, period,'Polkadot'),
+             corr_coins(coin_Solana, period,'Solana'),
+             corr_coins(coin_Stellar, period,'Stellar'),
+             corr_coins(coin_Tether, period,'Tether'),
+             corr_coins(coin_Tron, period,'Tron'),
+             corr_coins(coin_Uniswap, period,'Uniswap'),
+             corr_coins(coin_USDCoin, period,'USDCoin'),
+             corr_coins(coin_WrappedBitcoin, period,'WrappedBitcoin'),
+             corr_coins(coin_XRP, period,'XRP')
+             
+            )
+  
+  # Merge all data frames in the list
+  merged_df <- Reduce(function(x, y) full_join(x, y, by = "COIN"), dfs)
+  
+  return(merged_df)
+}
+```
+
+### How old is each coin project ?
+
+```{r echo=FALSE}
+Date = c(coin_Aave[1,4], coin_Binance[1,4], coin_Bitcoin[1,4],
+  coin_Cardano[1,4],coin_ChainLink[1,4],coin_Cosmos [1,4],
+  coin_CryptocomCoin[1,4],coin_Dogecoin[1,4],
+  coin_Ethereum[1,4], coin_Iota[1,4], coin_Litecoin[1,4],
+  coin_Monero[1,4], coin_NEM[1,4], coin_Polkadot[1,4],
+  coin_Solana[1,4], coin_Stellar[1,4], coin_Tether[1,4],
+  coin_Tron[1,4], coin_USDCoin[1,4], coin_Uniswap[1,4],
+  coin_WrappedBitcoin[1,4], coin_XRP[1,4]
+  )
+
+Coin = c('Aave', 'BinanceCoin','Bitcoin', 'Cardano', 'ChainLink', 'Cosmos', 'CryptocomCoin',
+    'Dogecoin',  'Ethereum', 'Iota', 'Litecoin', 'Monero', 'NEM', 'Polkadot',
+    'Solana', 'Stellar', 'Tether', 'Tron', 'USDCoin', 'Uniswap', 'WrappedBitcoin', 'XRP')
+
+data.frame(Coins = Coin, Date = Date)
+
+```
+
+Bitcoin, Litecoin, XRP and Dogecoin are the relatively old crypto coins; starting from 2013. 2020 is the most recent date Solana, Aave and Polkadot went live for the first time. From this discovery, Crypto is a young industry. Most projects are barely 5 years old.
+
+### How volatile are the coins relative to each other ?
+
+This is answered by the volatility index, computed as a standard deviation of the daily returns of closing price of the coin. Large values of the volatility index indicate a volatile coin. I look at this from three time perspectives - year, quarter, month and week - to get a nuanced view of volatility in the crypto market. 
+
+Box plots for each time perspectives are displayed below. 
+
+```{r echo=TRUE}
+# compute the volatility index - sd of returns function of each coin 
+
+volatility_index = function(coin, period ){
+  
+ 
+      
+  
+  # isolate date and returns 
+  coin      = cbind(coin["Date"], apply(coin["Close"], 2, Delt))
+  coin$Date = ymd_hms(coin$Date)
+  
+  
+  if (period == "Year"){
+    
+    
+     # group same year returns together. take the sd
+      coin = coin |>
+              mutate(Year = year(Date)) |>
+              select(Year, Close) |>
+              group_by(Year) |>
+              summarise(volatility_index = sd(Close, na.rm = TRUE))
+       return(coin) 
+    
+  }
+    
+  if (period == "Week"){
+    # group same weekly returns together. take the sd
+      coin = coin |>
+              mutate(Week = yearweek(Date)) |>
+              select(Week, Close) |>
+              group_by(Week) |>
+              summarise(volatility_index = sd(Close, na.rm = FALSE))
+       return(as.data.frame(coin)) 
+    
+  }
+    
+    
+  
+  if (period == "Month"){
+  
+      # group same month returns together. take the sd
+      coin = coin |>
+              mutate(Month = yearmonth(Date)) |>
+              select(Month, Close) |>
+              group_by(Month) |>
+              summarise(volatility_index = sd(Close, na.rm = TRUE))
+       return(as.data.frame(coin)) 
+      
+  }
+  
+      
+  if (period == "Quarter"){
+    
+  
+        
+      # group same weekly returns together. take the sd
+      coin = coin |>
+              mutate(Quarter = yearquarter(Date)) |>
+              select(Quarter, Close) |>
+              group_by(Quarter) |>
+              summarise(volatility_index = sd(Close, na.rm = FALSE))
+       return(as.data.frame(coin))
+  }
+  
+  else{
+    print("It should be:year, week, month, or quarter")
+  }
+      
+}
+
+head(volatility_index(coin_Bitcoin, "Year"))
+
+```
+
+
+
+
+
+```{r}
+
+# Define the wider function
+wider <- function(coin_df, period, coin_name) {
+  
+  # Get the number of rows for the volatility index
+  p <- dim(volatility_index(coin_df, period))[1]
+  
+  # Create a coin variable with repeated coin name
+  coin <- rep(coin_name, p)
+  
+  # Extract the volatility index values
+  volatility_index <- volatility_index(coin_df, period)[,2]
+  
+  # Combine coin name and volatility index into a dataframe
+  run_dat <- as.data.frame(cbind(coin, volatility_index))
+  
+  return(run_dat)
+}
+
+
+# List of coins and their dataframes
+coins <- list(
+  Aave = coin_Aave,
+  Binance = coin_Binance,
+  Bitcoin = coin_Bitcoin,
+  Cardano = coin_Cardano,
+  ChainLink = coin_ChainLink,
+  Cosmos = coin_Cosmos,
+  CryptocomCoin = coin_CryptocomCoin,
+  Dogecoin = coin_Dogecoin,
+  EOS = coin_EOS,
+  Ethereum = coin_Ethereum,
+  Iota = coin_Iota,
+  Litecoin = coin_Litecoin,
+  Monero = coin_Monero,
+  NEM = coin_NEM,
+  Polkadot = coin_Polkadot,
+  Solana = coin_Solana,
+  Stellar = coin_Stellar,
+  Tether = coin_Tether,
+  Tron = coin_Tron,
+  Uniswap = coin_Uniswap,
+  USDCoin = coin_USDCoin,
+  WrappedBitcoin = coin_WrappedBitcoin,
+  XRP = coin_XRP
+)
+
+
+```
+
+
+
+
+
+```{r}
+
+volatility_boxplot = function(period){
+  # Create a list of dataframes using lapply
+  df_list <- lapply(names(coins), function(coin_name) {
+  wider(coins[[coin_name]], period, coin_name)
+  })
+
+  # Combine all dataframes into one using do.call and rbind
+  final_df <- do.call(rbind, df_list)
+
+
+  # Create a distribution plot using ggplot. 
+  plot = ggplot(final_df, aes(x = coin, y = as.numeric(volatility_index))) +
+         geom_boxplot() +
+         theme(
+            axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+            plot.margin = unit(c(1,1,1,1), "cm")
+            ) +
+         coord_flip() + 
+         labs(
+           y = "Volatility Index",
+           x = "Coin",
+       title = "How volatile are the coins relative to each other ?",
+       subtitle =
+         "Dogecoin, NEM and XRP are high risk crypto coins in 2012-2021" ,
+     caption = "lenstwist"
+       )
+
+    return(plot)
+}
+
+volatility_boxplot(period = "Week")
+volatility_boxplot(period = "Month")
+volatility_boxplot(period = "Quarter")
+volatility_boxplot(period = "Year")
+```
+A presence of many outliers represent extreme volatility. Coins with many outliers have experienced periods with unusually high volatility compared to their typical behavior. Generally in a weekly basis, most coins have many outliers, showing extreme volatility. This behavior becomes less aparrent as the time period perspective increases, i.e. month, quarter and year. 
+
+I use the interquartile range (IQR) to gain insight on the variability of the volatility index in different time perspectives. Shorter width of the boxplot means lower IQR - revealing a less variable volatility behaviour in that time perspective. Dogecoin, NEM, Stellar and XRP have the longest boxes, which reveals a extremely variable volatility index. One cannot simply predict the how volatile these particular coins. On the contrary, USDCoin and Tether have the shortest IQR; their volatility index is less variable; it is somewhat easy to predict its how volatile they are, in all the time perspectives. Bitcoin appears to be moderate in its volatility index variability. 
+
+Last thing to help us answer our question is to compare median volatility index as the central tendency of the volatility in given time perspective. Coins with high median volatility index have a greater than typical price fluctuations, (To me, a median is more robust than a mean, especially when it comes to sensitive stuff like volatility. I trust it more.). The median values of all coins appear to be somewhat similar in each time perspective, roughly around 0.04-0.05. But, it increases 0.08 - 0.09 in yearly time perspective. The coins in the crypto market respond to signals in roughly the same way. 
+
+Dogecoin, NEM and XRP are high risk crypto coins, while Tether and USDCoin are low risk crypto coins, in a market that responds in a similar direction to the signals. 
+
+### How does volatility look like over time for each coin ?
+
+```{r echo=TRUE}
+# Make it a tsibble object 
+
+volatility_wrapped_bitcoin <- volatility_index(coin_WrappedBitcoin, "Month") |>
+                              as_tsibble(index = Month)
+volatility_bitcoin         <- volatility_index(coin_Bitcoin, "Month") |>
+                              as_tsibble(index = Month)
+volatility_Ethereum         <- volatility_index(coin_Ethereum, "Month") |>
+                               as_tsibble(index = Month)
+
+
+# Create the plot
+ggplot() +
+  geom_line(data = volatility_wrapped_bitcoin, aes(x = Month, y = sd_returns, color = "Wrapped Bitcoin"), size = 1.2) +
+  geom_line(data = volatility_bitcoin, aes(x = Month, y = sd_returns, color = "Bitcoin"), size = 1.2) +
+   geom_line(data = volatility_Ethereum, aes(x = Month, y = sd_returns,
+                                            color = "Ethereum"), size = 1.2)  +
+  scale_color_manual(values = c("Wrapped Bitcoin" = "orange", "Bitcoin" = "magenta",                                 "Ethereum" = "skyblue")) +
+  labs(y = "Volatility Index",
+       title = "",
+       color = "Coin") +
+  theme_minimal()
+```
+
+I discover that the coins' volatility patterns over time are somewhat similar in direction; they only differ in magnitude - it has an increasing trend and a huge spike after 2021. In one article, it is mentioned that it is vital to understand the social layer's influence on a cryptocurrency's volatility. For instance, [when Elon Musk tweets, crypto prices move](https://www.vox.com/recode/2021/5/18/22441831/elon-musk-bitcoin-dogecoin-crypto-prices-tesla).
+
+### Which coins are associated with one another ?
+
+In order words, which coins have the same reaction - impulse - to changes in the other coins volatility. This is largely answered by correlation statistics.
+
+```{r echo=TRUE}
+library(GGally)
+
+correlations = corrplot_coins("Week") 
+head(correlations)
+ggcorr(correlations[,-1], method = c("everything", "pearson"), geom = "text")
+
+```
+
+For now, you can roughly scan that most coins are highly positively correlated with one another. That means any change in the volatility index of one coin results in roughly same change in the volatility index of another coin. This is good enough, but it does not tell us about which group of coins are correlated in the same degree; can we clump them together as being strongly related to each other and bring the same information.
+
+To answer this question, I use ClustofVar: executes a clustering algorithm to optimize the homogeneity criterion in possible clusters.
+
+```{r echo=TRUE}
+
+
+library(ClustOfVar)
+
+tree <- hclustvar(correlations[,-1])
+
+
+
+# Assess the stability of the proposed partitions of variables
+stab <- stability(tree,B=40)
+head(stab$matCR)
+boxplot(stab$matCR, main="Dispersion of the adjusted Rand index", xlab = "Clusters")
+
+
+# i CHOSE 6 clusters. Rand index is quite stable in all the clusters. 
+
+plot(tree)
+
+
+# which coin is more influential in each of the 6 clusters; as in, which coin is more correlated to the synthetic variable - "as good as possible" summary of all the coins in the cluster? 
+
+part_hier = cutreevar(tree, 6)
+
+part_hier$var$cluster1       # group 1 
+part_hier$var$cluster2       # group 2
+part_hier$var$cluster3       # group 3
+part_hier$var$cluster4       # group 4
+part_hier$var$cluster5       # group 5
+part_hier$var$cluster6       # group 6
+
+
+
+```
+
+I arbitrarily chose 6 clusters as the adjusted Rand index is quite constant across all the proposed partitions of the coins. With that:
+
+Group 1: Iota, Litecoin and Monero (Monero) Group 2: NEM, Tron, Stellar, XRP (Stellar) Group 3: Dogecoin, Bitcoin, Tether (Bitcoin) Group 4: CryptocomCoin, USDCoin and WrappedBitcoin (USDCoin) Group 5: Binance, ChainLink, Cardano and Ethereum (Ethereum) Group 6: Uniswap, Aave, Polkadot, Cosmos and Solana (All except for Cosmos and Uniswap)
+
+Allocated like this, these coins are similarly associated with one another in terms of their volatility behavior. This is quite informative. More like which coin belongs to which family; family defined by how volatile are crypto coin returns. Monero, Stellar, Bitcoin, USDCoin and Ethereum are influential leaders in their respective families.
+
+Crypto is a young industry; a startup equity. Risky. But yet again if one doubles down on crypto coins being extremely volatile, they will miss an important insight about how crypto differs fundamentally from traditional finance. Crypto coins have liquidity and price discovery from the start; often represent hybrid assets, such as a commodity, currency, store of value and incentive for the validators that make a project function. These important features are quite different to traditional equity. It is clear from this that the crypto market are more sensitive to signals and changes. 
+
+It is not another Ponzi scheme. 
+
+Siphiwe
